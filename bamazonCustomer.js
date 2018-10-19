@@ -32,7 +32,7 @@ connection.connect(function(err) {
 
         // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
         for (var i = 0; i < results.length; i++) {
-            console.log(results[i].item_id + " " + results[i].product_name);
+            console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price);
         }
 
         checkStock()
@@ -77,20 +77,21 @@ var checkStock = function() {
           {
             item_id: answer.item_ID
           }
-          
         
         ], function(err, results) {
 
           if (err) throw err;
 
-          // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-          var quantity = Number(results[0].stock_quantity)
+          var quantity = parseInt(results[0].stock_quantity)
+          var units = parseInt(answer.units)
 
-          if (quantity <= 0){
+          console.log(quantity)
+          console.log(units)
+
+          if (units > quantity){
               console.log("Insufficient quantity!")
-              return
           } else {
-              buyProduct(answer.item_ID, answer.units, quantity, results[0].price)
+              buyProduct(answer.item_ID, units, quantity, results[0].price)
           }
         });
 
@@ -119,7 +120,7 @@ var buyProduct = function (item_id, units, starting_quantity, price){
       console.log("Order placed successfully!");
       // Once the update goes through, show the customer the total cost of their purchase.
       var totalCost = units * price
-      console.log("Total Cost:" + totalCost)
+      console.log("Total Cost: $" + totalCost)
       connection.end();
     }
   );

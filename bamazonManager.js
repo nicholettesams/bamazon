@@ -40,19 +40,23 @@ var displayOptions = function(){
         switch (answer.options) {
             case "View Products for Sale":
                 viewProducts()
+                break
 
             case "View Low Inventory":
                 viewLowInventory()
+                break
 
             case "Add to Inventory":
                 updateInventory()
+                break
 
             case "Add New Product":
                 addNewProduct()
+                break
 
             default: 
                 console.log("I don't recognize that option.")
-          
+                break
         }
     
       });
@@ -67,9 +71,10 @@ var viewProducts = function(){
 
       // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
       for (var i = 0; i < results.length; i++) {
-          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + "Quantity: " + results[i].stock_quantity);
+          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + " Quantity: " + results[i].stock_quantity);
       }
        
+      displayOptions()
   });
 }
 
@@ -80,8 +85,10 @@ var viewLowInventory = function(){
       if (err) throw err;
 
       for (var i = 0; i < results.length; i++) {
-        console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + "Quantity: " + results[i].stock_quantity);
+        console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + " Quantity: " + results[i].stock_quantity);
       }
+
+      displayOptions()
     });
 
 }
@@ -93,59 +100,46 @@ var updateInventory = function(){
 
       // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
       for (var i = 0; i < results.length; i++) {
-          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price);
+          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + " Quantity: " + results[i].stock_quantity);
       }
 
-    inquirer
-    .prompt([
-      {
-        name: "item_ID",
-        type: "input",
-        message: "What is the item ID of the item you would like to add invetory to?",
-        validate: function(value) {
+      inquirer
+      .prompt([
+        {
+          name: "item_ID",
+          type: "input",
+          message: "What is the item ID of the item you would like to add invetory to?",
+          validate: function(value) {
+              if (isNaN(value)) {
+                console.log("Enter a number.")
+              }
+              return true;
+            }
+        },
+        {
+          name: "units",
+          type: "input",
+          message: "How many units would you like to add?",
+          validate: function(value) {
             if (isNaN(value)) {
               console.log("Enter a number.")
             }
             return true;
           }
-      },
-      {
-        name: "units",
-        type: "input",
-        message: "How many units would you like to add?",
-        validate: function(value) {
-          if (isNaN(value)) {
-            console.log("Enter a number.")
-          }
-          return true;
         }
-      }
-    ])
-    .then(function(answer) {
-        // when finished prompting, check stock
-        connection.query(
-          "UPDATE products SET ? WHERE ?",
-          [
-            {
-              stock_quantity: stock_quantity + answer.units
-            },
-            {
-              item_id: answer.item_ID
+      ])
+      .then(function(answer) {
+          // when finished prompting, check stock
+          var query = connection.query(
+            "UPDATE products SET stock_quantity = stock_quantity + ? WHERE item_id = ?", [answer.units, answer.item_ID],
+            function(error) {
+              if (error) throw err;
+              console.log("Quantity updated successfully!");
+              displayOptions()
             }
-          ],
-          function(error) {
-            if (error) throw err;
-            console.log("Quantity updated successfully!");
-            start();
-          }
-        );
-
-    });
-           
+          );
+      });     
   });
-
-
-
 }
 
 var addNewProduct = function(){
@@ -186,7 +180,7 @@ var addNewProduct = function(){
       }
     ])
     .then(function(answer) {
-        // when finished prompting, check stock
+        
         connection.query(
           "INSERT INTO products SET ?",
           {
@@ -197,12 +191,10 @@ var addNewProduct = function(){
           },
           function(err) {
             if (err) throw err;
-            console.log("Your auction was created successfully!");
-            // re-prompt the user for if they want to bid or post
-            start();
+            console.log("Your product was created successfully!");
+            // re-prompt the user options
+            displayOptions()
           }
         );
-
     });
-
 }

@@ -24,4 +24,22 @@ VALUES
 ('Sweater', 'Clothing', 99.99, 20),
 ('Hiking Boots', 'Shoes', 99.99, 30),
 ('Laptop Computer', 'Electronics', 799.99, 75),
-('Power Strip', 'Electronics', 9.99, 10)
+('Power Strip', 'Electronics', 9.99, 10);
+
+
+CREATE TABLE departments (
+	department_id INT AUTO_INCREMENT,
+    department_name VARCHAR(255) NOT NULL,
+    over_head_costs DECIMAL(10,2),
+    PRIMARY KEY (department_id)
+);
+
+ALTER TABLE bamazon.products 
+ADD COLUMN product_sales DECIMAL(20,2) DEFAULT 0;
+
+INSERT INTO bamazon.departments (department_name, over_head_costs)
+VALUES ('Electronics', 1000),
+('Books', 5000),
+('Movies', 1000),
+('Clothing', 1000), 
+('Shoes', 1000)

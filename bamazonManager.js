@@ -61,17 +61,148 @@ var displayOptions = function(){
 
 
 var viewProducts = function(){
+    // the app should list every available item: the item IDs, names, prices, and quantities.
+    connection.query("SELECT * FROM products", function(err, results) {
+      if (err) throw err;
 
+      // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
+      for (var i = 0; i < results.length; i++) {
+          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + "Quantity: " + results[i].stock_quantity);
+      }
+       
+  });
 }
 
 var viewLowInventory = function(){
+    // should list all items with an inventory count lower than five.
+    var query = connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, results) {
+
+      if (err) throw err;
+
+      for (var i = 0; i < results.length; i++) {
+        console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + "Quantity: " + results[i].stock_quantity);
+      }
+    });
 
 }
 
 var updateInventory = function(){
+    //  should display a prompt that will let the manager "add more" of any item currently in the store.
+    connection.query("SELECT * FROM products", function(err, results) {
+      if (err) throw err;
+
+      // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
+      for (var i = 0; i < results.length; i++) {
+          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price);
+      }
+
+    inquirer
+    .prompt([
+      {
+        name: "item_ID",
+        type: "input",
+        message: "What is the item ID of the item you would like to add invetory to?",
+        validate: function(value) {
+            if (isNaN(value)) {
+              console.log("Enter a number.")
+            }
+            return true;
+          }
+      },
+      {
+        name: "units",
+        type: "input",
+        message: "How many units would you like to add?",
+        validate: function(value) {
+          if (isNaN(value)) {
+            console.log("Enter a number.")
+          }
+          return true;
+        }
+      }
+    ])
+    .then(function(answer) {
+        // when finished prompting, check stock
+        connection.query(
+          "UPDATE products SET ? WHERE ?",
+          [
+            {
+              stock_quantity: stock_quantity + answer.units
+            },
+            {
+              item_id: answer.item_ID
+            }
+          ],
+          function(error) {
+            if (error) throw err;
+            console.log("Quantity updated successfully!");
+            start();
+          }
+        );
+
+    });
+           
+  });
+
+
 
 }
 
 var addNewProduct = function(){
+    // should allow the manager to add a completely new product to the store
+    inquirer
+    .prompt([
+      {
+        name: "product",
+        type: "input",
+        message: "What is the name of the product?",
+      },
+      {
+        name: "department",
+        type: "input",
+        message: "What is the department?",
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "What is the price?",
+        validate: function(value) {
+          if (isNaN(value)) {
+            console.log("Enter a number.")
+          }
+          return true;
+        }
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: "What is the quantity?",
+        validate: function(value) {
+          if (isNaN(value)) {
+            console.log("Enter a number.")
+          }
+          return true;
+        }
+      }
+    ])
+    .then(function(answer) {
+        // when finished prompting, check stock
+        connection.query(
+          "INSERT INTO products SET ?",
+          {
+            product_name: answer.product,
+            department_name: answer.department,
+            price: answer.price,
+            stock_quantity: answer.quantity
+          },
+          function(err) {
+            if (err) throw err;
+            console.log("Your auction was created successfully!");
+            // re-prompt the user for if they want to bid or post
+            start();
+          }
+        );
+
+    });
 
 }

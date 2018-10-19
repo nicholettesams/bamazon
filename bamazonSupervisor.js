@@ -58,18 +58,22 @@ var displayOptions = function(){
 
 var viewProducts = function(){
     // the app should list department_id, department_name, over_head_costs, product_sales, total_profit
-    var sql = "select d.department_id, d.department_name, d.over_head_costs, sum(p.product_sales) as product_sales, d.over_head_costs - sum(p.product_sales) as total_profit"
-    sql += " from bamazon.departments as d INNER JOIN bamazon.products as p ON d.department_name = p.department_name"
-    sql += " group by d.department_id, d.department_name, d.over_head_costs"
+    var sql = "SELECT d.department_id, d.department_name, d.over_head_costs"
+    sql += ", ifnull(sum(p.product_sales), 0) as product_sales"
+    sql += ", ifnull(sum(p.product_sales), 0) - d.over_head_costs as total_profit"
+    sql += " FROM bamazon.departments as d LEFT JOIN bamazon.products as p ON d.department_name = p.department_name"
+    sql += " GROUP BY d.department_id, d.department_name, d.over_head_costs"
+    sql += " ORDER BY d.department_name;"
+    
     
     connection.query(sql, function(err, results) {
       if (err) throw err;
 
       // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
       for (var i = 0; i < results.length; i++) {
-          console.log(results[i].department_id + " " + results[i].department_name + "Overhead: $" + results[i].over_head_costs + " Product Sales: $" + results[i].product_sales + "Profit: $" + results[i].total_profit);
+          console.log(results[i].department_id + " " + results[i].department_name + " Overhead: $" + results[i].over_head_costs + " Product Sales: $" + results[i].product_sales + " Profit: $" + results[i].total_profit);
       }
-       
+    
       displayOptions()
   });
 }

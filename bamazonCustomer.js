@@ -83,21 +83,17 @@ var checkStock = function() {
 
           if (err) throw err;
 
-          console.log(results)
-
           // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
           var quantity = Number(results[0].stock_quantity)
-          console.log(quantity);
-      
+
           if (quantity <= 0){
               console.log("Insufficient quantity!")
               return
           } else {
-              console.log("Existing quanity: " + quantity)
               buyProduct(answer.item_ID, answer.units, quantity, results[0].price)
           }
         });
-        console.log(query.sql)
+
     });
 }
 
@@ -107,7 +103,7 @@ var buyProduct = function (item_id, units, starting_quantity, price){
   
 
   var newQuantity = starting_quantity - units
-  console.log("New Quantity: " + newQuantity)
+
   connection.query(
     "UPDATE products SET ? WHERE ?",
     [
@@ -121,11 +117,9 @@ var buyProduct = function (item_id, units, starting_quantity, price){
     function(err) {
       if (err) throw err;
       console.log("Order placed successfully!");
+      // Once the update goes through, show the customer the total cost of their purchase.
+      var totalCost = units * price
+      console.log("Total Cost:" + totalCost)
     }
   );
-
-
-  // Once the update goes through, show the customer the total cost of their purchase.
-  var totalCost = units * price
-  console.log("Total Cost:" + totalCost)
 }

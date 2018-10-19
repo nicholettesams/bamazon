@@ -28,7 +28,7 @@ Run bamazonManager.js to display options to View Products for Sale, View Low Inv
 
 ![Bamazon Manager Examples](screenshots/manager_addinventory.jpg?raw=true "Bamazon Manager Examples")
 
-![Bamazon Manager Examples](screenshots/manager_addproducts.jpg?raw=true "Bamazon Manager Examples")
+![Bamazon Manager Examples](screenshots/manager_addproduct.jpg?raw=true "Bamazon Manager Examples")
 
 ### Supervisor
 Run bamazonSupervisor.js to display options to View Product Sales by Department and to Create New Department.

@@ -73,46 +73,59 @@ var checkStock = function() {
     ])
     .then(function(answer) {
         // when finished prompting, check stock
-        connection.query("SELECT * FROM products WHERE item_id = ?", [answer.item_ID], function(err, results) {
+        var query = connection.query("SELECT * FROM products WHERE ?", [
+          {
+            item_id: answer.item_ID
+          }
+          
+        
+        ], function(err, results) {
+
           if (err) throw err;
 
+          console.log(results)
+
           // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-          var quantity = Number(results[0].item_quantity)
+          var quantity = Number(results[0].stock_quantity)
           console.log(quantity);
       
           if (quantity <= 0){
               console.log("Insufficient quantity!")
               return
           } else {
-              buyProduct(answer.item_ID, quantity, results[0].item_quantity, results[0].price)
+              console.log("Existing quanity: " + quantity)
+              buyProduct(answer.item_ID, answer.units, quantity, results[0].price)
           }
         });
+        console.log(query.sql)
     });
 }
 
 
-var buyProduct = function (item_id, order_quantity, starting_quantity, price){
+var buyProduct = function (item_id, units, starting_quantity, price){
   // updating the SQL database to reflect the remaining quantity.
-  var newQuantity = starting_quantity - order_quantity
+  
+
+  var newQuantity = starting_quantity - units
+  console.log("New Quantity: " + newQuantity)
   connection.query(
     "UPDATE products SET ? WHERE ?",
     [
       {
-        quantity: newQuantity
+        stock_quantity: newQuantity
       },
       {
         item_id: item_id
       }
     ],
-    function(error) {
-      if (error) throw err;
-      console.log("Bid placed successfully!");
-      start();
+    function(err) {
+      if (err) throw err;
+      console.log("Order placed successfully!");
     }
   );
 
 
   // Once the update goes through, show the customer the total cost of their purchase.
-  var totalCost = order_quantity * price
+  var totalCost = units * price
   console.log("Total Cost:" + totalCost)
 }

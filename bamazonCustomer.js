@@ -104,22 +104,15 @@ var buyProduct = function (item_id, units, starting_quantity, price){
   
 
   var newQuantity = starting_quantity - units
+  var totalCost = units * price
 
   connection.query(
-    "UPDATE products SET ? WHERE ?",
-    [
-      {
-        stock_quantity: newQuantity
-      },
-      {
-        item_id: item_id
-      }
-    ],
+    "UPDATE products SET stock_quantity = ?, product_sales = ? WHERE item_id = ?", [newQuantity, totalCost, item_id],
     function(err) {
       if (err) throw err;
       console.log("Order placed successfully!");
       // Once the update goes through, show the customer the total cost of their purchase.
-      var totalCost = units * price
+      
       console.log("Total Cost: $" + totalCost)
       connection.end();
     }

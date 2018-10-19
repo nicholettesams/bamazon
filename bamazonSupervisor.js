@@ -58,7 +58,7 @@ var displayOptions = function(){
 
 var viewProducts = function(){
     // the app should list department_id, department_name, over_head_costs, product_sales, total_profit
-    var sql = "select d.department_id, d.department_name, d.over_head_costs, sum(p.product_sales) as product_sales, d.over_head_costs - sum(p.product_sales) as total_profit
+    var sql = "select d.department_id, d.department_name, d.over_head_costs, sum(p.product_sales) as product_sales, d.over_head_costs - sum(p.product_sales) as total_profit"
     sql += " from bamazon.departments as d INNER JOIN bamazon.products as p ON d.department_name = p.department_name"
     sql += " group by d.department_id, d.department_name, d.over_head_costs"
     

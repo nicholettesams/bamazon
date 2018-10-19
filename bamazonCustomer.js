@@ -120,6 +120,7 @@ var buyProduct = function (item_id, units, starting_quantity, price){
       // Once the update goes through, show the customer the total cost of their purchase.
       var totalCost = units * price
       console.log("Total Cost:" + totalCost)
+      connection.end();
     }
   );
 }

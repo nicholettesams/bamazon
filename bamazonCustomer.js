@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+const cTable = require("console.table");
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -27,13 +28,10 @@ connection.connect(function(err) {
 
   var  displayItems = function() {
     // query the database for all products
-    connection.query("SELECT * FROM products", function(err, results) {
+    connection.query("SELECT item_id, product_name, price FROM products", function(err, results) {
         if (err) throw err;
 
-        // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-        for (var i = 0; i < results.length; i++) {
-            console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price);
-        }
+        console.table(results)
 
         checkStock()
              
@@ -85,9 +83,6 @@ var checkStock = function() {
           var quantity = parseInt(results[0].stock_quantity)
           var units = parseInt(answer.units)
 
-          console.log(quantity)
-          console.log(units)
-
           if (units > quantity){
               console.log("Insufficient quantity!")
           } else {
@@ -100,9 +95,8 @@ var checkStock = function() {
 
 
 var buyProduct = function (item_id, units, starting_quantity, price){
-  // updating the SQL database to reflect the remaining quantity.
-  
 
+  // updating the SQL database to reflect the remaining quantity.
   var newQuantity = starting_quantity - units
   var totalCost = units * price
 
@@ -111,8 +105,8 @@ var buyProduct = function (item_id, units, starting_quantity, price){
     function(err) {
       if (err) throw err;
       console.log("Order placed successfully!");
+
       // Once the update goes through, show the customer the total cost of their purchase.
-      
       console.log("Total Cost: $" + totalCost)
       connection.end();
     }

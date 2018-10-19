@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+const cTable = require("console.table");
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -70,9 +71,7 @@ var viewProducts = function(){
       if (err) throw err;
 
       // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-      for (var i = 0; i < results.length; i++) {
-          console.log(results[i].department_id + " " + results[i].department_name + " Overhead: $" + results[i].over_head_costs + " Product Sales: $" + results[i].product_sales + " Profit: $" + results[i].total_profit);
-      }
+      console.table(results);
     
       displayOptions()
   });

@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+const cTable = require("console.table");
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -66,28 +67,28 @@ var displayOptions = function(){
 
 var viewProducts = function(){
     // the app should list every available item: the item IDs, names, prices, and quantities.
-    connection.query("SELECT * FROM products", function(err, results) {
+    connection.query("SELECT item_id, product_name, price, stock_quantity FROM products", function(err, results) {
       if (err) throw err;
 
       // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-      for (var i = 0; i < results.length; i++) {
-          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + " Quantity: " + results[i].stock_quantity);
-      }
-       
+      console.table(results) 
+
       displayOptions()
   });
 }
 
 var viewLowInventory = function(){
     // should list all items with an inventory count lower than five.
-    var query = connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, results) {
+    var query = connection.query("SELECT item_id, product_name, price, stock_quantity FROM products WHERE stock_quantity < 5", function(err, results) {
 
       if (err) throw err;
 
-      for (var i = 0; i < results.length; i++) {
-        console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + " Quantity: " + results[i].stock_quantity);
+      if (results.length){
+          console.table(results)
+      } else {
+          console.log("No products have a low inventory.")
       }
-
+      
       displayOptions()
     });
 
@@ -99,9 +100,7 @@ var updateInventory = function(){
       if (err) throw err;
 
       // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-      for (var i = 0; i < results.length; i++) {
-          console.log(results[i].item_id + " " + results[i].product_name + " $" + results[i].price + " Quantity: " + results[i].stock_quantity);
-      }
+      console.table(results)
 
       inquirer
       .prompt([

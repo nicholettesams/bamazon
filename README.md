@@ -9,8 +9,27 @@ This is a Node console application with a MySQL database.
 ## Technologies
 Node, MySQL, Inquirer, Console.Table 
 
+## How to Setup
+First install all dependencies
+```
+npm i
+```
+Then login to your mysql server to setup and seed the database
+```
+mysql -u root -p
+Enter password:
+source bamazonSeed.sql
+quit
+```
+Update mysql username and password in connection.js file.
+
 ## How to Use
-There are 3 javaScript files (bamazonCustomer.js, bamazonManager.js and bamazonSupervisor.js) and the user should run the appropriate file in Node for the functionality that they want to use.
+There are 3 javaScript files (bamazonCustomer.js, bamazonManager.js and bamazonSupervisor.js) and the user should run the appropriate file in Node for the functionality that they want to use. Alternatively, you can run the scripts:
+```
+npm run customer
+npm run supervisor
+npm run manager
+```
 
 ### Customer
 Run bamazonCustomer.js to display all prouducts and prompt the user for which item they want to buy.  The user will enter the product Id and the number of items they want to buy.  If there is enough stock, the purchase will go through and the database will be updated.  

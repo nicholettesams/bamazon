@@ -18,7 +18,7 @@ Then login to your mysql server to setup and seed the database
 ```
 mysql -u root -p
 Enter password:
-source bamazonSeed.sql
+source db\bamazonSeed.sql
 quit
 ```
 Update mysql username and password in connection.js file.
